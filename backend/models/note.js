@@ -1,17 +1,6 @@
 const mongoose = require('mongoose')
-const config = require('./utils/config')
 
 mongoose.set('strictQuery', false)
-
-const url = config.MONGODB_URI
-
-mongoose.connect(url)
-  .then(() => {
-    console.log('connected to MongoDB')
-  })
-  .catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
 
 const noteSchema = new mongoose.Schema({
   content: {
@@ -29,6 +18,5 @@ noteSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-
 
 module.exports = mongoose.model('Note', noteSchema)
