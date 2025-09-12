@@ -8,16 +8,13 @@ const Note = require('../models/note')
 
 const api = supertest(app)
 
-
 beforeEach(async () => {
   await Note.deleteMany({})
-  let noteObject = new Note(helper.initialNotes[0])
-  await noteObject.save()
-  noteObject = new Note(helper.initialNotes[1])
-  await noteObject.save()
+  await Note.insertMany(helper.initialNotes)
 })
 
 test('all notes are returned', async () => {
+  console.log('entered test')
   const response = await api.get('/api/notes')
   assert.strictEqual(response.body.length, helper.initialNotes.length)
 })
@@ -28,6 +25,18 @@ test('a specific note is within the returned notes', async () => {
   assert.strictEqual(contents.includes('HTML is easy'), true)
 })
 
+test('a specific note can be viewed', async () => {
+  const notesAtStart = await helper.notesInDb()
+  const noteToView = notesAtStart[0]
+
+  const resultNote = await api
+    .get(`/api/notes/${noteToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.deepStrictEqual(resultNote.body, noteToView)
+})
+
 test('notes are returned as json', async () => {
   await api
     .get('/api/notes')
@@ -35,7 +44,7 @@ test('notes are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test.only('a valid note can be added', async () => {
+test('a valid note can be added', async () => {
   const newNote = {
     content: 'async/await simplifies making async calls',
     important: true,
@@ -50,11 +59,11 @@ test.only('a valid note can be added', async () => {
   const notesAtEnd = await helper.notesInDb()
   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
 
-  const contents = notesAtEnd.map(n => n.content)
+  const contents = notesAtEnd.map((n) => n.content)
   assert(contents.includes('async/await simplifies making async calls'))
 })
 
-test.only('note without content is not added', async () => {
+test('note without content is not added', async () => {
   const newNote = {
     important: true,
   }
@@ -64,6 +73,20 @@ test.only('note without content is not added', async () => {
   const notesAtEnd = await helper.notesInDb()
 
   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
+})
+
+test('a note can be deleted', async () => {
+  const notesAtStart = await helper.notesInDb()
+  const noteToDelete = notesAtStart[0]
+
+  await api.delete(`/api/notes/${noteToDelete.id}`).expect(204)
+
+  const notesAtEnd = await helper.notesInDb()
+
+  const contents = notesAtEnd.map((notes) => notes.content)
+  assert(!contents.includes(noteToDelete.content))
+
+  assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1)
 })
 
 after(async () => {
