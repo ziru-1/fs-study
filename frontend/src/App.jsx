@@ -1,25 +1,22 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import noteService from "./services/notes";
-import Note from "./components/Note";
-import Notification from "./components/Notification";
-import Footer from "./components/Footer";
+import { useState, useEffect } from 'react';
+import noteService from './services/notes';
+import Note from './components/Note';
+import Notification from './components/Notification';
+import Footer from './components/Footer';
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
+  const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes);
     });
   }, []);
-
-  const handleNoteChange = (e) => {
-    setNewNote(e.target.value);
-  };
 
   const addNote = (event) => {
     event.preventDefault();
@@ -30,7 +27,7 @@ const App = () => {
 
     noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
-      setNewNote("");
+      setNewNote('');
     });
   };
 
@@ -43,7 +40,7 @@ const App = () => {
       .then((returnedNote) => {
         setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
       })
-      .catch((error) => {
+      .catch(() => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
         );
@@ -54,6 +51,11 @@ const App = () => {
       });
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    console.log('logging in with', username, password);
+  };
+
   const notesToShow = showAll
     ? notes
     : notes.filter((note) => note.important === true);
@@ -62,25 +64,50 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>
+            username
+            <input
+              type="text"
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            password
+            <input
+              type="password"
+              value={password}
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </label>
+        </div>
+        <button type="submit">login</button>
+      </form>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          {showAll ? "Important Only" : "All"}
+          {showAll ? 'Important Only' : 'All'}
         </button>
       </div>
       <ul>
-        {Array.isArray(notesToShow) && (notesToShow.map((note) => (
-          <Note
-            key={note.id}
-            note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
-          />)
-        ))}
+        {Array.isArray(notesToShow) &&
+          notesToShow.map((note) => (
+            <Note
+              key={note.id}
+              note={note}
+              toggleImportance={() => toggleImportanceOf(note.id)}
+            />
+          ))}
       </ul>
       <form onSubmit={addNote}>
         <input
           placeholder="Add new note"
           value={newNote}
-          onChange={handleNoteChange}
+          onChange={({target}) => setNewNote(target.value)}
         />
         <button type="submit">Save</button>
       </form>
