@@ -28,6 +28,7 @@
     "vite": "^7.0.4"
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "semi": false
   }
 }

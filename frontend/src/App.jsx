@@ -1,82 +1,82 @@
-import { useState, useEffect, useRef } from 'react';
-import noteService from './services/notes';
-import loginService from './services/login';
-import Note from './components/Note';
-import Notification from './components/Notification';
-import Footer from './components/Footer';
-import LoginForm from './components/LoginForm';
-import Togglable from './components/Togglable';
-import NoteForm from './components/NoteForm';
+import { useState, useEffect, useRef } from 'react'
+import noteService from './services/notes'
+import loginService from './services/login'
+import Note from './components/Note'
+import Notification from './components/Notification'
+import Footer from './components/Footer'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import NoteForm from './components/NoteForm'
 
 const App = () => {
-  const [notes, setNotes] = useState([]);
-  const [showAll, setShowAll] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notes, setNotes] = useState([])
+  const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState(null)
   const noteFormRef = useRef()
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
-      setNotes(initialNotes);
-    });
-  }, []);
+      setNotes(initialNotes)
+    })
+  }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      noteService.setToken(user.token);
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
   const addNote = (noteObject) => {
     noteFormRef.current.toggleVisibility()
     noteService.create(noteObject).then((returnedNote) => {
-      setNotes(notes.concat(returnedNote));
-    });
-  };
+      setNotes(notes.concat(returnedNote))
+    })
+  }
 
   const toggleImportanceOf = (id) => {
-    const note = notes.find((n) => n.id === id);
-    const changedNote = { ...note, important: !note.important };
+    const note = notes.find((n) => n.id === id)
+    const changedNote = { ...note, important: !note.important }
 
     noteService
       .update(id, changedNote)
       .then((returnedNote) => {
-        setNotes(notes.map((note) => (note.id === id ? returnedNote : note)));
+        setNotes(notes.map((note) => (note.id === id ? returnedNote : note)))
       })
       .catch(() => {
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
-        );
+        )
         setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
-        setNotes(notes.filter((n) => n.id !== id));
-      });
-  };
+          setErrorMessage(null)
+        }, 5000)
+        setNotes(notes.filter((n) => n.id !== id))
+      })
+  }
 
   const handleLogin = async (userCredentials) => {
     try {
-      const user = await loginService.login(userCredentials);
+      const user = await loginService.login(userCredentials)
 
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
-      noteService.setToken(user.token);
-      setUser(user);
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      noteService.setToken(user.token)
+      setUser(user)
     } catch (error) {
-      setErrorMessage('wrong credentials');
+      setErrorMessage('wrong credentials')
       setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-      throw error;
+        setErrorMessage(null)
+      }, 5000)
+      throw error
     }
-  };
+  }
 
   const notesToShow = showAll
     ? notes
-    : notes.filter((note) => note.important === true);
+    : notes.filter((note) => note.important === true)
 
   return (
     <div>
@@ -114,7 +114,7 @@ const App = () => {
 
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
