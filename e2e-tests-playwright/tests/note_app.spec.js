@@ -1,4 +1,4 @@
-const { test, describe, expect } = require('@playwright/test')
+const { test, describe, expect, beforeEach } = require('@playwright/test')
 
 describe('Note app', () => {
   test('front page can be opened', async ({ page }) => {
@@ -24,6 +24,8 @@ describe('Note app', () => {
 
   describe('when logged in', () => {
     beforeEach(async ({ page }) => {
+      await page.goto('http://localhost:5173')
+
       await page.getByRole('button', { name: 'login' }).click()
       await page.getByLabel('username').fill('admin')
       await page.getByLabel('password').fill('admin123')
