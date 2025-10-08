@@ -1,10 +1,21 @@
-const noteReducer = (state = [], action) => {
-  if (action.type === 'NEW_NOTE') {
-    state.concat(action.payload)
-    return state
-  }
+import { createStore } from 'redux'
 
-  return state
+const noteReducer = (state = [], action) => {
+  switch (action.type) {
+    case 'NEW_NOTE':
+      return state.concat(action.payload)
+    case 'TOGGLE_IMPORTANCE': {
+      const id = action.payload.id
+      const noteToChange = state.find((n) => n.id === id)
+      const changedNote = {
+        ...noteToChange,
+        important: !noteToChange.important,
+      }
+      return state.map((note) => (note.id !== id ? note : changedNote))
+    }
+    default:
+      return state
+  }
 }
 
 const store = createStore(noteReducer)
@@ -14,8 +25,8 @@ store.dispatch({
   payload: {
     content: 'the app state is in redux store',
     important: true,
-    id: 1
-  }
+    id: 1,
+  },
 })
 
 store.dispatch({
@@ -23,21 +34,21 @@ store.dispatch({
   payload: {
     content: 'state changes are made with actions',
     important: false,
-    id: 2
-  }
+    id: 2,
+  },
 })
 
 const App = () => {
-  return(
+  return (
     <div>
       <ul>
-        {store.getState().map(note=>
+        {store.getState().map((note) => (
           <li key={note.id}>
             {note.content} <strong>{note.important ? 'important' : ''}</strong>
           </li>
-        )}
-        </ul>
+        ))}
+      </ul>
     </div>
   )
 }
-export default noteReducer;
+export default noteReducer
