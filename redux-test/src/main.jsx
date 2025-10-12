@@ -21,7 +21,6 @@ store.dispatch(createNote('combineReducers forms one reducer from many simple re
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    {/* <App /> */}
-    <div></div>
+    <App />
   </Provider>
 )
