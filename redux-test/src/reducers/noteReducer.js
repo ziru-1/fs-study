@@ -13,13 +13,11 @@ const initialState = [
   },
 ]
 
-const generateId = () =>
-  Number((Math.random() * 1000000).toFixed(0))
-
+const generateId = () => Number((Math.random() * 1000000).toFixed(0))
 
 const noteSlice = createSlice({
   name: 'notes',
-  initialState,
+  initialState: [],
   reducers: {
     createNote(state, action) {
       const content = action.payload
@@ -31,15 +29,16 @@ const noteSlice = createSlice({
     },
     toggleImportanceOf(state, action) {
       const id = action.payload
-      const noteToChange = state.find(n => n.id === id)
-      const changedNote = { 
-        ...noteToChange, 
-        important: !noteToChange.important 
+      const noteToChange = state.find((n) => n.id === id)
+      const changedNote = {
+        ...noteToChange,
+        important: !noteToChange.important,
       }
-      return state.map(note =>
-        note.id !== id ? note : changedNote 
-      )     
-    }
+      return state.map((note) => (note.id !== id ? note : changedNote))
+    },
+    setNotes(state, action) {
+      return action.payload
+    },
   },
 })
 
@@ -47,5 +46,5 @@ console.log('noteslice', noteSlice)
 console.log('reducer', noteSlice.reducer)
 console.log('actions', noteSlice.actions)
 
-export const {createNote,toggleImportanceOf} = noteSlice.actions
+export const { createNote, toggleImportanceOf, setNotes } = noteSlice.actions
 export default noteSlice.reducer
