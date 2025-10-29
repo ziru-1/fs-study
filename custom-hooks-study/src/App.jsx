@@ -1,19 +1,21 @@
-import { useState } from 'react'
+import useCounter from "./hooks/useCounter"
+
 const App = () => {
-  const [counter, setCounter] = useState(0)
+  const left = useCounter()
+  const right = useCounter()
 
   return (
     <div>
-      <div>{counter}</div>
-      <button onClick={() => setCounter(counter + 1)}>
-        plus
+      {left.value}
+      <button onClick={left.increase}>
+        left
       </button>
-      <button onClick={() => setCounter(counter - 1)}>
-        minus
-      </button>      
-      <button onClick={() => setCounter(0)}>
-        zero
+      <button onClick={right.increase}>
+        right
       </button>
+      {right.value}
     </div>
   )
 }
+
+export default App
