@@ -6,6 +6,8 @@ import {
   TableContainer,
   TableRow,
   Paper,
+  TextField,
+  Button,
 } from '@mui/material'
 
 import { useState } from 'react'
@@ -97,12 +99,16 @@ const Login = (props) => {
       <h2>login</h2>
       <form onSubmit={onSubmit}>
         <div>
-          username: <input />
+          <TextField label="username" />
         </div>
         <div>
-          password: <input type='password' />
+          <TextField label="password" type='password' />
         </div>
-        <button type='submit'>login</button>
+        <div>
+          <Button variant="contained" color="primary" type="submit">
+            login
+          </Button>
+        </div>
       </form>
     </div>
   )
