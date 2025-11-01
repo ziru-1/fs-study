@@ -8,6 +8,9 @@ import {
   Paper,
   TextField,
   Button,
+  Alert,
+  AppBar,
+  Toolbar,
 } from '@mui/material'
 
 import { useState } from 'react'
@@ -58,14 +61,12 @@ const Notes = ({ notes }) => (
     <TableContainer component={Paper}>
       <Table>
         <TableBody>
-          {notes.map(note => (
+          {notes.map((note) => (
             <TableRow key={note.id}>
               <TableCell>
                 <Link to={`/notes/${note.id}`}>{note.content}</Link>
               </TableCell>
-              <TableCell>
-                {note.user}
-              </TableCell>
+              <TableCell>{note.user}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -99,13 +100,13 @@ const Login = (props) => {
       <h2>login</h2>
       <form onSubmit={onSubmit}>
         <div>
-          <TextField label="username" />
+          <TextField label='username' />
         </div>
         <div>
-          <TextField label="password" type='password' />
+          <TextField label='password' type='password' />
         </div>
         <div>
-          <Button variant="contained" color="primary" type="submit">
+          <Button variant='contained' color='primary' type='submit'>
             login
           </Button>
         </div>
@@ -137,9 +138,14 @@ const App = () => {
   ])
 
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const login = (user) => {
     setUser(user)
+    setMessage(`Welcome ${user}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const padding = {
@@ -154,24 +160,28 @@ const App = () => {
   return (
     <Container>
       <div>
-        <div>
-          <Link style={padding} to='/'>
-            home
-          </Link>
-          <Link style={padding} to='/notes'>
-            notes
-          </Link>
-          <Link style={padding} to='/users'>
-            users
-          </Link>
-          {user ? (
-            <em>{user} logged in</em>
-          ) : (
-            <Link style={padding} to='/login'>
-              login
-            </Link>
-          )}
-        </div>
+        {message && <Alert severity='success'>{message}</Alert>}
+
+        <AppBar position='static'>
+          <Toolbar>
+            <Button color='inherit' component={Link} to='/'>
+              home
+            </Button>
+            <Button color='inherit' component={Link} to='/notes'>
+              notes
+            </Button>
+            <Button color='inherit' component={Link} to='/users'>
+              users
+            </Button>
+            {user ? (
+              <em>{user} logged in</em>
+            ) : (
+              <Button color='inherit' component={Link} to='/login'>
+                login
+              </Button>
+            )}
+          </Toolbar>
+        </AppBar>
 
         <Routes>
           <Route path='/notes/:id' element={<Note note={note} />} />
