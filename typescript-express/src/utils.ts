@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { NewDiaryEntry, Visibility, Weather } from './types';
 
-export const newEntrySchema = z.object({
+export const NewEntrySchema = z.object({
   weather: z.enum(Weather),
   visibility: z.enum(Visibility),
   date: z.iso.date(),
@@ -9,5 +9,5 @@ export const newEntrySchema = z.object({
 });
 
 export const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
-  return newEntrySchema.parse(object);
+  return NewEntrySchema.parse(object);
 };
