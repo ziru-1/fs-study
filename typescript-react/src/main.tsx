@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
+import App from './App'
 
 interface WelcomeProps {
   name: string
@@ -12,6 +12,7 @@ const Welcome = (props: WelcomeProps) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <App />
     <Welcome name='Sarah' />
   </StrictMode>,
 )
