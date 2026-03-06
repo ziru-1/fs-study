@@ -1,70 +1,38 @@
-interface CoursePartBase {
-  name: string
-  exerciseCount: number
-}
+import { useState } from 'react'
 
-interface CoursePartBasic extends CoursePartBase {
-  description: string
-  kind: 'basic'
+interface Note {
+  id: string
+  content: string
 }
-
-interface CoursePartGroup extends CoursePartBase {
-  groupProjectCount: number
-  kind: 'group'
-}
-
-interface CoursePartBackground extends CoursePartBase {
-  description: string
-  backgroundMaterial: string
-  kind: 'background'
-}
-
-type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground
 
 const App = () => {
-  const courseName = 'Half Stack application development'
-  const courseParts: CoursePart[] = [
-    {
-      name: 'Fundamentals',
-      exerciseCount: 10,
-      description: 'This is an awesome course part',
+  const [notes, setNotes] = useState<Note[]>([{ id: '1', content: 'testing' }])
+  const [newNote, setNewNote] = useState('')
 
-      kind: 'basic',
-    },
-    {
-      name: 'Using props to pass data',
-      exerciseCount: 7,
-      groupProjectCount: 3,
+  const noteCreation = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    const noteToAdd = {
+      content: newNote,
+      id: String(notes.length + 1),
+    }
+    setNotes(notes.concat(noteToAdd))
+    setNewNote('')
+  }
 
-      kind: 'group',
-    },
-    {
-      name: 'Basics of type Narrowing',
-      exerciseCount: 7,
-      description: 'How to go from unknown to string',
-
-      kind: 'basic',
-    },
-    {
-      name: 'Deeper type usage',
-      exerciseCount: 14,
-      description: 'Confusing description',
-      backgroundMaterial:
-        'https://type-level-typescript.com/template-literal-types',
-
-      kind: 'background',
-    },
-  ]
   return (
     <div>
-      <h1>{courseName}</h1>
-
-      {courseParts.map((part) => (
-        <div key={part.name}>
-          <h3>{part.name}</h3>
-          <p>Exercises: {part.exerciseCount}</p>
-        </div>
-      ))}
+      <form onSubmit={noteCreation}>
+        <input
+          value={newNote}
+          onChange={(event) => setNewNote(event.target.value)}
+        />
+        <button type='submit'>add</button>
+      </form>
+      <ul>
+        {notes.map((note) => (
+          <li key={note.id}>{note.content}</li>
+        ))}
+      </ul>
     </div>
   )
 }
